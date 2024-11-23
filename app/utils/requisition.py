@@ -1,4 +1,3 @@
-from bs4 import BeautifulSoup
 import pandas as pd
 from selenium import webdriver
 from selenium.common.exceptions import (
@@ -42,8 +41,12 @@ def create_content_dataframe():
     # Transform table content in text
     table_data_list = [item.text for item in table]
 
+    data_points = int(len(table_data_list))
+    columns = int(len(headers_list))
+    rows = int(data_points / columns)
+
     table_data_structured = divide_list(
-        table_data_list, 20
+        table_data_list, rows
     )  # 20 == len(table_data_list)/len(headers_list) == 100/
 
     table_data_structured = list(table_data_structured)
@@ -68,18 +71,6 @@ def get_pages():
         By.CSS_SELECTOR, "li.current > span:nth-child(2)"
     )
     return int(current_page.text), pagination_list
-
-
-url = "https://sistemaswebb3-listados.b3.com.br/indexPage/day/IBOV?language=pt-br"
-url_test = "https://web.archive.org/web/20241110001337/https://sistemaswebb3-listados.b3.com.br/indexPage/day/IBOV?language=pt-br"
-driver.get(url_test)
-html = driver.page_source
-print("Primeira requisição - Página 1")
-content_dataframe_page_1 = create_content_dataframe()
-current_page, page_list = get_pages()
-print(
-    f"""A extração da página {current_page} deu certo e contém o total de {len(content_dataframe_page_1)}: \n {content_dataframe_page_1[::5]}"""
-)
 
 
 def wait_time_to_render(driver):
@@ -127,20 +118,58 @@ def go_to_previous_page(driver):
         print("Erro ao tentar clicar no botão de página anterior.")
 
 
+url = "https://sistemaswebb3-listados.b3.com.br/indexPage/day/IBOV?language=pt-br"
+url_test = "https://web.archive.org/web/20241110001337/https://sistemaswebb3-listados.b3.com.br/indexPage/day/IBOV?language=pt-br"
+driver.get(url_test)
+html = driver.page_source
+
+content_dataframe_page_1 = create_content_dataframe()
+current_page, page_list = get_pages()
+print(
+    f"""A extração da página {current_page} deu certo e contém o total de {len(content_dataframe_page_1)}: \n {content_dataframe_page_1[::5]}"""
+)
+
 go_to_next_page(driver)
 content_dataframe_page_2 = create_content_dataframe()
 current_page, page_list = get_pages()
-print(f"Indo para a próxima págin 2 agora vamo ver - {current_page}")
+print(f"Indo para a próxima página {current_page}")
 print(
-    f"""Deu certo e contém o total de {len(content_dataframe_page_2)}: \n {content_dataframe_page_2[::5]}\n"""
+    f"""Deu certo e contém o total de {len(content_dataframe_page_2)}: \n {content_dataframe_page_2[:3]}\n"""
 )
 
 go_to_next_page(driver)
 content_dataframe_page_3 = create_content_dataframe()
 current_page, page_list = get_pages()
-print(f"Indo para a próxima página 3 quero so sacaarrrrr - {current_page}")
+print(f"Indo para a próxima página {current_page}")
 print(
-    f"""Deu certo e contém o total de {len(content_dataframe_page_3)}: \n {content_dataframe_page_3[::5]}\n"""
+    f"""Deu certo e contém o total de {len(content_dataframe_page_3)}: \n {content_dataframe_page_3[:3]}\n"""
 )
 
-driver.implicitly_wait(50)
+go_to_next_page(driver)
+content_dataframe_page_4 = create_content_dataframe()
+current_page, page_list = get_pages()
+print(f"Indo para a próxima página {current_page}")
+print(
+    f"""Deu certo e contém o total de {len(content_dataframe_page_4)}: \n {content_dataframe_page_4[:3]}\n"""
+)
+
+go_to_next_page(driver)
+content_dataframe_page_5 = create_content_dataframe()
+current_page, page_list = get_pages()
+print(f"Indo para a próxima página {current_page}")
+print(
+    f"""Deu certo e contém o total de {len(content_dataframe_page_5)}: \n {content_dataframe_page_5[:3]}\n"""
+)
+
+content_dataframe = pd.concat(
+    [
+        content_dataframe_page_1,
+        content_dataframe_page_2,
+        content_dataframe_page_3,
+        content_dataframe_page_4,
+        content_dataframe_page_5,
+    ],
+    ignore_index=True,
+)
+
+content_dataframe.to_parquet("app/data/teste.parquet")
