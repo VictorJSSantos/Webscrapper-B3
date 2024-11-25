@@ -123,6 +123,14 @@ url_test = "https://web.archive.org/web/20241110001337/https://sistemaswebb3-lis
 driver.get(url_test)
 html = driver.page_source
 
+wallet_date = driver.find_element(
+    By.XPATH, '//*[@id="divContainerIframeB3"]/div/div[1]/form/h2'
+)
+wallet_date = wallet_date.text
+wallet_date = wallet_date.split(" - ")[1]
+wallet_date = pd.to_datetime(wallet_date)
+print(wallet_date)
+
 content_dataframe_page_1 = create_content_dataframe()
 current_page, page_list = get_pages()
 print(
@@ -171,5 +179,8 @@ content_dataframe = pd.concat(
     ],
     ignore_index=True,
 )
+
+content_dataframe["Data de Extração"] = wallet_date
+print(f"\n Agora finalmente o df está da seguinte forma: \n{content_dataframe[:3]}")
 
 content_dataframe.to_parquet("app/data/teste.parquet")
