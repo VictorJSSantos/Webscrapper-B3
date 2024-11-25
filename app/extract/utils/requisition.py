@@ -10,9 +10,10 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument("--incognito")
 service = Service(ChromeDriverManager().install())
-driver = webdriver.Chrome(service=service)
+driver = webdriver.Chrome(service=service, options=chrome_options)
 
 
 # Implementing this function because it maintains the right parsing for every table row independent of the table contest size (20, 50, 120, etc)

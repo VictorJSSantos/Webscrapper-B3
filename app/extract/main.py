@@ -3,7 +3,7 @@ from utils.requisition import *
 
 url = "https://sistemaswebb3-listados.b3.com.br/indexPage/day/IBOV?language=pt-br"
 url_test = "https://web.archive.org/web/20241110001337/https://sistemaswebb3-listados.b3.com.br/indexPage/day/IBOV?language=pt-br"
-driver.get(url_test)
+driver.get(url)
 html = driver.page_source
 
 content_dataframe_page_1 = create_content_dataframe()
@@ -89,4 +89,5 @@ content_dataframe["participacao_percentual"] = (
 
 print(f"\nAgora finalmente o df está da seguinte forma: \n{content_dataframe[:3]}")
 
-content_dataframe.to_csv("app/data/teste.csv")
+content_dataframe.to_csv(f"app/data/{wallet_date}.csv")
+content_dataframe.to_parquet(f"app/data/{wallet_date}.parquet.gzip")
