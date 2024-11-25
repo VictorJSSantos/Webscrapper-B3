@@ -31,4 +31,17 @@ O grupo que está desenvolvendo este projeto é composto pelas pessoas listadas 
   - Tatiana Haddad
   - Victor Santos
 
+## Project Diretories || Diretórios do projeto
+
+**WIP**
+
+## Prerequisites || Pré-requisitos
+
+**WIP**
+
+## Environment Setup || Setup de Ambiene
+
+**WIP**
+
+
 </div>
