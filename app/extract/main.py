@@ -60,12 +60,33 @@ wallet_date = driver.find_element(
 )
 wallet_date = wallet_date.text
 wallet_date = wallet_date.split(" - ")[1]
-content_dataframe["Data de Extração"] = wallet_date
+wallet_date = wallet_date.replace("/", "-")
+content_dataframe["info_extraction_date"] = wallet_date
+
+# Renomeando colunas
+content_dataframe = content_dataframe.rename(
+    {
+        "Código": "codigo",
+        "Ação": "acao",
+        "Tipo": "tipo",
+        "Qtde. Teórica": "qtde_teorica",
+        "Part. (%)": "participacao_percentual",
+    },
+    axis=1,
+)
+
+# Limpando e convertendo "qtde_teorica" para inteiro
+content_dataframe["qtde_teorica"] = (
+    content_dataframe["qtde_teorica"].str.replace(".", "", regex=False).astype(int)
+)
+
+# Limpando e convertendo "participacao_percentual" para float
+content_dataframe["participacao_percentual"] = (
+    content_dataframe["participacao_percentual"]
+    .str.replace(",", ".", regex=False)
+    .astype(float)
+)
 
 print(f"\nAgora finalmente o df está da seguinte forma: \n{content_dataframe[:3]}")
-print(50 * ("-\n"))
-
-analytics = pd.DataFrame(content_dataframe.info())
-print(analytics)
 
 content_dataframe.to_csv("app/data/teste.csv")
