@@ -1,28 +1,15 @@
-import boto3
-
-print("Loading function")
-
-glue = boto3.client("glue", region_name="us-east-1")
-
-
 def lambda_handler(event, context):
-    gluejobname = "GLUE_JOB_NAME"
+    if "Records" not in event:
+        print("O evento não contém a chave 'Records'.")
+        return {"statusCode": 400, "body": "Evento inválido. 'Records' não encontrado."}
 
     try:
-        # Processa o evento do S3 para obter informações do arquivo
         bucket = event["Records"][0]["s3"]["bucket"]["name"]
         key = event["Records"][0]["s3"]["object"]["key"]
-        print(
-            f"Arquivo {key} foi adicionado ao bucket {bucket}. Iniciando o Glue Job {gluejobname}."
-        )
+        print(f"Arquivo {key} foi adicionado ao bucket {bucket}.")
 
-        # Inicia o Glue Job
-        runId = glue.start_job_run(JobName=gluejobname)
-        print(f"Glue Job iniciado com ID: {runId['JobRunId']}")
+        # Seu código para iniciar o Glue Job
 
-        # Opcional: Verifica o status inicial do Glue Job
-        status = glue.get_job_run(JobName=gluejobname, RunId=runId["JobRunId"])
-        print("Job Status : ", status["JobRun"]["JobRunState"])
-    except Exception as e:
-        print("Erro ao iniciar o Glue Job:", e)
-        raise e
+    except KeyError as e:
+        print(f"Erro na estrutura do evento: {e}")
+        return {"statusCode": 400, "body": f"Erro no evento recebido: {e}"}
