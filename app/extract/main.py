@@ -89,5 +89,5 @@ content_dataframe["participacao_percentual"] = (
 
 print(f"\nAgora finalmente o df está da seguinte forma: \n{content_dataframe[:3]}")
 
-content_dataframe.to_csv(f"app/data/{wallet_date}.csv")
+# content_dataframe.to_csv(f"app/data/{wallet_date}.csv")
 content_dataframe.to_parquet(f"app/data/{wallet_date}.parquet.gzip")
