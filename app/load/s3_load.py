@@ -19,13 +19,8 @@ session = boto3.Session(
 # Test it on a service
 s3 = session.resource("s3")
 
-# Print out bucket names
-# for bucket in s3.buckets.all():
-#     print(bucket.name)
-
-
 # Adding file 'teste.parquet' into bucket 'fiap-tc-modulo-2-raw'
-file_name = "25-11-24.parquet.gzip"
+file_name = "26-11-24.parquet.gzip"
 bucket = "fiap-tc-modulo-2-raw"
 file_path = f"app/data/{file_name}"
 

@@ -51,6 +51,7 @@ def create_content_dataframe():
     )  # 20 == len(table_data_list)/len(headers_list) == 100/
 
     table_data_structured = list(table_data_structured)
+    print(table_data_structured)
 
     content_dataframe = pd.DataFrame(
         table_data_structured, columns=headers_list, index=None
