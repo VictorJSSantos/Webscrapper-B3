@@ -4,6 +4,7 @@
 
 O objetivo do presente trabalho é aplicar o conhecimento em Computação em Nuvem que aprendemos ao longo deste módulo para que façamos um pipeline de dados utilizando a AWS, mais precisamente os serviços Glue, Lambda, Catalog e Athena. Faremos um pipeline de dados batch dos dados da Bovespa (B3), onde iremos fazer um ciclo completo de análise: extrair, transformar e carregar.
 O primeiro passo será realizar o web scrapping, onde utilizaremos a biblioteca 'Selenium', após isso, iremos fazer o upload do arquivo via biblioteca 'boto3' para o serviço S3 da AWS. Deveremos também configurar a AWS, de forma que quando houver um arquivo sendo adicionado ao S3, ele ative uma 'Lambda Function' que irá ativar um job do AWS Glue para fazer o tratamento dos dados e, por fim, fazer a disponibilização destes dados tratados em outro bucket S3.
+
 ## Objetivos
 
 Em linhas gerais, o que devemos garantir neste projeto é o descrito abaixo:
@@ -22,26 +23,43 @@ Em linhas gerais, o que devemos garantir neste projeto é o descrito abaixo:
   - O sexto passo é que deveremos garantir, também, que o job no Glue automaticamente deve catalogar os dados no Glue Catalog e criar uma tabela no banco de dados default do Glue Catalog;
   - O sétimo e último passo é relacionado ao acesso à estes dados, devemos garantir que os dados estejam disponíveis e legíveis no Athena. Como opcional podemos fazer um notebook com visualizações gráficas dos dados ingeridos.
 
-## Integrantes
+Esse projeto está sendo desenvolvido para a realização do Tech Challenge do segundo módulo da Pós-graduação em Engenharia de Machine Learning da FIAP.
+  
+## Diretórios do projeto
 
-Esse projeto está sendo desenvolvido com o objetivo de ser o entregável do segundo módulo da Pós-graduação em Engenharia de Machine Learning da FIAP. 
-O grupo que está desenvolvendo este projeto é composto pelas pessoas listadas a seguir:
-  - Alex Barros
-  - Janis Silva
-  - Tatiana Haddad
-  - Victor Santos
+Como o projeto é um exemplo de um ELT, separamos as pastas por contexto, então teremos as pastas conforme a parte do processo que aquele código é responsável por:
+  - extract: Contém os arquivos relativos ao web scrapping da página da B3;
+    - utils: Contém as funções utilizadas no arquivo main.py da pasta extract;
+  - load: Contém os arquivos relativos ao load na AWS e à função Lambda que é acionada na AWS;
+  - transform: Contém o arquivo do job Glue que é executado;
 
-## Project Diretories || Diretórios do projeto
+## Pré-requisitos
 
-**WIP**
+- Python version
+> Python 3.11.9
 
-## Prerequisites || Pré-requisitos
+## Setup de Ambiene
 
-**WIP**
+1. Realize o clone do repositório:
+  > git clone https://github.com/VictorJSSantos/Modulo-1.git
 
-## Environment Setup || Setup de Ambiene
+2. Recomendado:: Crie o ambiente virtual: 
+  > python -m venv venv
 
-**WIP**
+3. Ativando o ambiente virtual: 
+No Windows:
+  > venv\Scripts\activate
+No Linux:
+  > source venv/bin/activate
 
+4. Configure o interpretador python no ambiente virtual:
+Ctrl + Shift + P para abrir a paleta de comandos.
+  > Digite Python: Select Interpreter e escolha o Python dentro da pasta venv.
+
+5. Atualize o pip para garantir a instalação devida das dependências:
+  > python -m pip install --upgrade pip
+
+5. Instale as dependências:
+  > pip install -r requirements.txt
 
 </div>
