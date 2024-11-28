@@ -41,7 +41,7 @@ Como o projeto é um exemplo de um ELT, separamos as pastas por contexto, então
 ## Setup de Ambiente
 
 1. Realize o clone do repositório:
-  > git clone https://github.com/VictorJSSantos/Modulo-1.git
+  > git clone https://github.com/VictorJSSantos/Web.git](https://github.com/VictorJSSantos/Webscrapper-B3.git)
 
 2. Recomendado:: Crie o ambiente virtual: 
   > python -m venv venv
