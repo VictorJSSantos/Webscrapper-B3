@@ -1,15 +1,35 @@
+import logging
+import boto3
+
+
+# Setting basic configs for Logging purposes
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
+
+# Creating the Client Object
+glue = boto3.client("glue", region_name="us-east-1")
+
+
 def lambda_handler(event, context):
-    if "Records" not in event:
-        print("O evento não contém a chave 'Records'.")
-        return {"statusCode": 400, "body": "Evento inválido. 'Records' não encontrado."}
+    gluejobname = "Bovespa ELT"
 
     try:
+        # Processing the event on S3 in order to obtain information like the bucket and key from the file.
         bucket = event["Records"][0]["s3"]["bucket"]["name"]
         key = event["Records"][0]["s3"]["object"]["key"]
-        print(f"Arquivo {key} foi adicionado ao bucket {bucket}.")
+        print(
+            f"Arquivo {key} foi adicionado ao bucket {bucket}. Iniciando o Glue Job {gluejobname}."
+        )
 
-        # Seu código para iniciar o Glue Job
+        # Initiate the Glue job
+        runId = glue.start_job_run(JobName=gluejobname)
+        print(f"Glue Job iniciado com ID: {runId['JobRunId']}")
 
-    except KeyError as e:
-        print(f"Erro na estrutura do evento: {e}")
-        return {"statusCode": 400, "body": f"Erro no evento recebido: {e}"}
+        # Verify the state of the job
+        status = glue.get_job_run(JobName=gluejobname, RunId=runId["JobRunId"])
+        print("Job Status : ", status["JobRun"]["JobRunState"])
+    except Exception as e:
+        print("Erro ao iniciar o Glue Job:", e)
+        raise e
