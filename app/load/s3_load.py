@@ -18,12 +18,10 @@ session = boto3.Session(
     region_name=AWS_REGION,
 )
 
-# Configuração básica do logger
+# Basic logging configs
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
-
-# Logger para a aplicação
 logger = logging.getLogger(__name__)
 
 # Test it on a service

@@ -19,17 +19,17 @@ def lambda_handler(event, context):
         # Processing the event on S3 in order to obtain information like the bucket and key from the file.
         bucket = event["Records"][0]["s3"]["bucket"]["name"]
         key = event["Records"][0]["s3"]["object"]["key"]
-        print(
+        logger.info(
             f"Arquivo {key} foi adicionado ao bucket {bucket}. Iniciando o Glue Job {gluejobname}."
         )
 
         # Initiate the Glue job
         runId = glue.start_job_run(JobName=gluejobname)
-        print(f"Glue Job iniciado com ID: {runId['JobRunId']}")
+        logger.info(f"Glue Job iniciado com ID: {runId['JobRunId']}")
 
         # Verify the state of the job
         status = glue.get_job_run(JobName=gluejobname, RunId=runId["JobRunId"])
-        print("Job Status : ", status["JobRun"]["JobRunState"])
+        logger.info("Job Status : ", status["JobRun"]["JobRunState"])
     except Exception as e:
-        print("Erro ao iniciar o Glue Job:", e)
+        logger.error(f"Erro ao iniciar o Glue Job: {e}")
         raise e
