@@ -1,8 +1,9 @@
+from datetime import datetime
 from utils.requisition import *
-
+import pandas as pd
+import subprocess
 
 url = "https://sistemaswebb3-listados.b3.com.br/indexPage/day/IBOV?language=pt-br"
-url_test = "https://web.archive.org/web/20241110001337/https://sistemaswebb3-listados.b3.com.br/indexPage/day/IBOV?language=pt-br"
 driver.get(url)
 html = driver.page_source
 
@@ -55,12 +56,12 @@ content_dataframe = pd.concat(
     ignore_index=True,
 )
 
+# Extraindo e formatando a data
 wallet_date = driver.find_element(
     By.XPATH, '//*[@id="divContainerIframeB3"]/div/div[1]/form/h2'
-)
-wallet_date = wallet_date.text
-wallet_date = wallet_date.split(" - ")[1]
-wallet_date = wallet_date.replace("/", "-")
+).text.split(" - ")[1]
+wallet_date = datetime.strptime(wallet_date, "%d/%m/%y").strftime("%Y_%m_%d")
+
 content_dataframe["info_extraction_date"] = wallet_date
 
 # Renomeando colunas
@@ -89,5 +90,19 @@ content_dataframe["participacao_percentual"] = (
 
 print(f"\nAgora finalmente o df está da seguinte forma: \n{content_dataframe[:3]}")
 
-# content_dataframe.to_csv(f"app/data/{wallet_date}.csv")
-content_dataframe.to_parquet(f"app/data/{wallet_date}.parquet.gzip")
+# Salvando o DataFrame em formato Parquet com a data no nome
+content_dataframe.to_parquet(f"app/data/{wallet_date}.parquet.gzip", compression='gzip')
+
+# Salvando o DataFrame em formato Parquet sem compressão (descompactado)
+content_dataframe.to_parquet(f"app/data/{wallet_date}.parquet", compression=None)
+
+# Chamando o script s3_load.py
+try:
+    descompactado_file = wallet_date + ".parquet"
+    subprocess.run(
+        ["python", "app/load/s3_load.py", descompactado_file],
+        check=True
+    )
+    print(f"Script s3_load.py executado com sucesso para o arquivo {descompactado_file}.")
+except subprocess.CalledProcessError as e:
+    print(f"Erro ao executar o script s3_load.py: {e}")
