@@ -27,7 +27,7 @@ session = boto3.Session(
 s3 = session.resource("s3")
 
 # Parametrizações do envio do arquivo para o bucket S3
-bucket = "fiap-etl-222987439421"
+bucket = "s3-fiap-etl-250461282134"
 file_path = f"app/data/{file_name}"
 key = f"raw/{file_name}"
 
