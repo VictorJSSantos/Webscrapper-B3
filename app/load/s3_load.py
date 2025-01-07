@@ -2,6 +2,14 @@ import boto3
 from datetime import datetime
 import logging
 import os
+import sys
+
+# Obtendo o nome do arquivo como argumento
+if len(sys.argv) < 2:
+    print("Erro: Nome do arquivo não fornecido.")
+    sys.exit(1)
+
+file_name = sys.argv[1]
 
 
 # Creating session variables
@@ -15,8 +23,14 @@ session = boto3.Session(
     aws_access_key_id=AWS_ACCESS_KEY_ID,
     aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
     aws_session_token=AWS_SESSION_TOKEN,
-    region_name=AWS_REGION,
+    region_name=AWS_REGION
 )
+
+# Test it on a service
+s3 = session.resource("s3")
+
+# Parametrizações do envio do arquivo para o bucket S3
+bucket = "s3-fiap-etl-250461282134"
 
 # Configuração básica do logger
 logging.basicConfig(
@@ -33,8 +47,13 @@ s3 = session.resource("s3")
 date = datetime.now().strftime("%d-%m-%y")
 file_name = f"{date}.parquet.gzip"
 bucket = "fiap-tc-modulo-2-raw"
-file_path = f"app/data/{file_name}"
 
+file_path = f"app/data/{file_name}"
+key = f"raw/{file_name}"
+
+
+with open(file_path, "rb") as data:
+    s3.Bucket(bucket).put_object(Key=key, Body=data)
 
 def add_file(file_name, file_path, bucket):
     """
