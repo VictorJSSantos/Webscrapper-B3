@@ -1,4 +1,6 @@
 import boto3
+from datetime import datetime
+import logging
 import os
 import sys
 
@@ -8,6 +10,7 @@ if len(sys.argv) < 2:
     sys.exit(1)
 
 file_name = sys.argv[1]
+
 
 # Creating session variables
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
@@ -28,8 +31,68 @@ s3 = session.resource("s3")
 
 # Parametrizações do envio do arquivo para o bucket S3
 bucket = "s3-fiap-etl-250461282134"
+
+# Configuração básica do logger
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
+# Logger para a aplicação
+logger = logging.getLogger(__name__)
+
+# Test it on a service
+s3 = session.resource("s3")
+
+# Adding file 'teste.parquet' into bucket 'fiap-tc-modulo-2-raw'
+date = datetime.now().strftime("%d-%m-%y")
+file_name = f"{date}.parquet.gzip"
+bucket = "fiap-tc-modulo-2-raw"
+
 file_path = f"app/data/{file_name}"
 key = f"raw/{file_name}"
 
+
 with open(file_path, "rb") as data:
     s3.Bucket(bucket).put_object(Key=key, Body=data)
+
+def add_file(file_name, file_path, bucket):
+    """
+    Adiciona um arquivo ao bucket S3 especificado.
+
+    :param file_name: Nome do arquivo no bucket
+    :param file_path: Caminho local do arquivo
+    :param bucket: Nome do bucket S3
+    """
+    try:
+        with open(file_path, "rb") as data:
+            s3.Bucket(bucket).put_object(Key=file_name, Body=data)
+
+        logger.info(f"O arquivo {file_name} foi adicionado ao bucket {bucket}")
+    except Exception as e:
+        logger.error(
+            f"O arquivo {file_name} teve algum problema para ser enviado ao bucket {bucket}: {e}",
+            exc_info=True,
+        )
+
+
+# Testing if file exists to prevent from doubling spending on files that already exists (Lambda, ETLS runs)
+try:
+    s3.Object(bucket, file_name).load()
+    answer = (
+        input("O arquivo já existe no bucket, deseja continuar? (y/n):").strip().lower()
+    )
+    if answer != "y":
+        logger.info(f"Operação cancelada pelo usuário.")
+    else:
+        add_file(file_name, file_path, bucket)
+
+except Exception as e:
+    if e.response["Error"]["Code"] == "404":
+        logger.warning(
+            f"Arquivo {file_name} não está presente no bucket {bucket} e iremos adicioná-lo"
+        )
+        add_file(file_name, file_path, bucket)
+    else:
+        logger.error(
+            f"Erro ao tentar verificar o arquivo {file_name}: {e}", exc_info=True
+        )
