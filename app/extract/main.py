@@ -60,7 +60,7 @@ content_dataframe = pd.concat(
 wallet_date = driver.find_element(
     By.XPATH, '//*[@id="divContainerIframeB3"]/div/div[1]/form/h2'
 ).text.split(" - ")[1]
-wallet_date = datetime.strptime(wallet_date, "%d/%m/%y").strftime("%Y_%m_%d")
+wallet_date = datetime.strptime(wallet_date, "%d/%m/%y").strftime("%Y-%m-%d")
 
 content_dataframe["info_extraction_date"] = wallet_date
 
