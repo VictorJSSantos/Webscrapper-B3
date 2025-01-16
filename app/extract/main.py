@@ -3,12 +3,16 @@ from utils.requisition import *
 import pandas as pd
 import subprocess
 
+from datetime import datetime
+
 url = "https://sistemaswebb3-listados.b3.com.br/indexPage/day/IBOV?language=pt-br"
 driver.get(url)
+wait_time_to_render(driver)
 html = driver.page_source
 
-content_dataframe_page_1 = create_content_dataframe()
+# Get info about pagination
 current_page, page_list = get_pages()
+
 print(
     f"""A extração da página {current_page} deu certo e contém o total de {len(content_dataframe_page_1)}: \n {content_dataframe_page_1[::5]}"""
 )
@@ -62,9 +66,23 @@ wallet_date = driver.find_element(
 ).text.split(" - ")[1]
 wallet_date = datetime.strptime(wallet_date, "%d/%m/%y").strftime("%Y-%m-%d")
 
-content_dataframe["info_extraction_date"] = wallet_date
+page_list.insert(0, current_page)
+max_page = max(page_list)
+print(f"O numero de páginas é {max_page}")
 
-# Renomeando colunas
+# Webscrapping data from the website and setting a DataFrame
+dataframes_lists = []
+for i in range(1, max_page + 1):
+    content_dataframe = create_content_dataframe(f"content_dataframe_page_{i}")
+    dataframes_lists.append(content_dataframe)
+    if i < max_page:
+        go_to_next_page(driver)
+
+content_dataframe = pd.concat(dataframes_lists, ignore_index=True)
+
+# Adding date info and renaming columns
+wallet_date = get_date()
+content_dataframe["info_extraction_date"] = wallet_date
 content_dataframe = content_dataframe.rename(
     {
         "Código": "codigo",
@@ -76,25 +94,18 @@ content_dataframe = content_dataframe.rename(
     axis=1,
 )
 
-# Limpando e convertendo "qtde_teorica" para inteiro
+# Formatting columns
 content_dataframe["qtde_teorica"] = (
     content_dataframe["qtde_teorica"].str.replace(".", "", regex=False).astype(int)
 )
-
-# Limpando e convertendo "participacao_percentual" para float
 content_dataframe["participacao_percentual"] = (
     content_dataframe["participacao_percentual"]
     .str.replace(",", ".", regex=False)
     .astype(float)
 )
 
-print(f"\nAgora finalmente o df está da seguinte forma: \n{content_dataframe[:3]}")
-
 # Salvando o DataFrame em formato Parquet com a data no nome
-content_dataframe.to_parquet(f"app/data/{wallet_date}.parquet.gzip", compression='gzip')
-
-# Salvando o DataFrame em formato Parquet sem compressão (descompactado)
-content_dataframe.to_parquet(f"app/data/{wallet_date}.parquet", compression=None)
+content_dataframe.to_parquet(f"app/data/{wallet_date}.parquet", compression='gzip')
 
 # Chamando o script s3_load.py
 try:
