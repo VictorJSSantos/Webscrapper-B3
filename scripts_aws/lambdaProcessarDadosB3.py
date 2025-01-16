@@ -7,9 +7,9 @@ s3_client = boto3.client('s3')
 glue_client = boto3.client('glue')
 
 # Nome do bucket e pasta RAW
-BUCKET_NAME = 's3-fiap-etl-???????????????????'
+BUCKET_NAME = 's3-fiap-etl-250461282134'
 RAW_FOLDER = 'raw/'
-GLUE_JOB_NAME = 'B3DataProcessingJob'
+GLUE_JOB_NAME = 'JobETLDataB3'
 
 def lambda_handler(event, context):
     try:
@@ -50,4 +50,3 @@ def lambda_handler(event, context):
             'statusCode': 500,
             'body': json.dumps({'error': str(e)})
         }
-
