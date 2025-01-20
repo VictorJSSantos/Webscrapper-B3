@@ -76,9 +76,7 @@ def create_content_dataframe(dataframe: str):
         columns = int(len(headers_list))
         rows = int(data_points / columns)
 
-        table_data_structured = divide_list(
-            table_data_list, rows
-        )  # 20 == len(table_data_list)/len(headers_list) == 100/
+        table_data_structured = divide_list(table_data_list, rows)
 
         table_data_structured = list(table_data_structured)
 
