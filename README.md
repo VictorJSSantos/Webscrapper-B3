@@ -5,6 +5,12 @@
 O objetivo do presente trabalho é aplicar o conhecimento em Computação em Nuvem que aprendemos ao longo deste módulo para que façamos um pipeline de dados utilizando a AWS, mais precisamente os serviços Glue, Lambda, Catalog e Athena. Faremos um pipeline de dados batch dos dados da Bovespa (B3), onde iremos fazer um ciclo completo de análise: extrair, transformar e carregar.
 O primeiro passo será realizar o web scrapping, onde utilizaremos a biblioteca 'Selenium', após isso, iremos fazer o upload do arquivo via biblioteca 'boto3' para o serviço S3 da AWS. Deveremos também configurar a AWS, de forma que quando houver um arquivo sendo adicionado ao S3, ele ative uma 'Lambda Function' que irá ativar um job do AWS Glue para fazer o tratamento dos dados e, por fim, fazer a disponibilização destes dados tratados em outro bucket S3.
 
+Esse projeto foi desenvolvido pelos seguintes alunos do curso de pós-graduação em Machine Learning Engineering da FIAP:
+- Alexandro Barros
+- Janis Silva
+- Tatiana Haddad
+- Victor Santos
+
 ## Objetivos
 
 Em linhas gerais, o que devemos garantir neste projeto é o descrito abaixo:
@@ -41,7 +47,7 @@ Como o projeto é um exemplo de um ELT, separamos as pastas por contexto, então
 ## Setup de Ambiente
 
 1. Realize o clone do repositório:
-  > git clone https://github.com/VictorJSSantos/Web.git](https://github.com/VictorJSSantos/Webscrapper-B3.git)
+  > git clone https://github.com/VictorJSSantos/Webscrapper-B3.git
 
 2. Recomendado:: Crie o ambiente virtual: 
   > python -m venv venv
