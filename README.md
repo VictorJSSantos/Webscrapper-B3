@@ -34,10 +34,13 @@ Esse projeto está sendo desenvolvido para a realização do Tech Challenge do s
 ## Diretórios do projeto
 
 Como o projeto é um exemplo de um ELT, separamos as pastas por contexto, então teremos as pastas conforme a parte do processo que aquele código é responsável por:
-  - extract: Contém os arquivos relativos ao web scrapping da página da B3;
-    - utils: Contém as funções utilizadas no arquivo main.py da pasta extract;
-  - load: Contém os arquivos relativos ao load na AWS e à função Lambda que é acionada na AWS;
-  - transform: Contém o arquivo do job Glue que é executado;
+  - app
+    - data: Contém os arquivos parquet gerados após a extração
+    - extract: Contém os arquivos relativos ao web scrapping da página da B3;
+      - utils: Contém as funções utilizadas no arquivo extractor.py da pasta extract;
+    - load: Contém os arquivos relativos ao load na AWS;
+    - transform: Contém os códigos do Job Glue e da função Lambda que estão cadastrados na AWS. Obs: Estes dois arquivos serão diferentes para cada usuário a depender de como os buckets e demais recursos foram criados e nomeados, portanto estão aqui para exemplificar e mostrar um pouco do que foi feito e não com o intuito de ser replicável fielmente ao escrito, uma vez que alguams variáveis serão obrigatoriamente diferentes para cada usuário;
+    - main.py: Arquivo que é responsável por rodar a aplicação como um todo.
 
 ## Pré-requisitos
 
